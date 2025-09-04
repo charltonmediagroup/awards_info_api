@@ -1,6 +1,6 @@
+import { NextResponse } from "next/server"
 import fs from "fs"
 import path from "path"
-import { NextResponse } from "next/server"
 
 const awardsDir = path.join(process.cwd(), "src/data/awards")
 const defaultFile = path.join(awardsDir, "default", "default.json")
@@ -17,8 +17,7 @@ export async function POST(req: Request) {
     fs.writeFileSync(filePath, defaultData, "utf8")
 
     return NextResponse.json({ success: true })
-  } catch (err) {
-    console.error(err)
+  } catch {
     return NextResponse.json({ error: "Failed to create region" }, { status: 500 })
   }
 }
