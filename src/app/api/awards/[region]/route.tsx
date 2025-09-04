@@ -1,35 +1,44 @@
-import { NextResponse } from "next/server"
-import fs from "fs"
-import path from "path"
+import { NextResponse } from "next/server";
+import fs from "fs";
+import path from "path";
 
-const AWARDS_API_TOKEN = process.env.AWARDS_API_TOKEN
-const awardsDir = path.join(process.cwd(), "src/data/awards")
+const awardsDir = path.join(process.cwd(), "src/data/awards");
+const AWARDS_API_TOKEN = process.env.AWARDS_API_TOKEN;
 
-export async function GET(req: Request, context: { params: { region: string } }) {
-  const { region } = context.params
-  const filePath = path.join(awardsDir, `${region}.json`)
+export async function GET(
+  req: Request,
+  context: { params: { region: string } }
+) {
+  const { region } = context.params;
+  const filePath = path.join(awardsDir, `${region}.json`);
 
   try {
-    const file = fs.readFileSync(filePath, "utf8")
-    return NextResponse.json(JSON.parse(file))
-  } catch {
-    return NextResponse.json({ error: "Region not found" }, { status: 404 })
+    const file = fs.readFileSync(filePath, "utf8");
+    const json = JSON.parse(file);
+    return NextResponse.json(json);
+  } catch (err) {
+    return NextResponse.json({ error: "Region not found" }, { status: 404 });
   }
 }
 
-export async function PUT(req: Request, context: { params: { region: string } }) {
-  const authHeader = req.headers.get("authorization")
-  if (!authHeader || authHeader !== `Bearer ${AWARDS_API_TOKEN}`)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+export async function PUT(
+  req: Request,
+  context: { params: { region: string } }
+) {
+  const authHeader = req.headers.get("authorization");
+  if (!authHeader || authHeader !== `Bearer ${AWARDS_API_TOKEN}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
-  const { region } = context.params
-  const filePath = path.join(awardsDir, `${region}.json`)
+  const { region } = context.params;
+  const filePath = path.join(awardsDir, `${region}.json`);
 
   try {
-    const body = await req.json()
-    fs.writeFileSync(filePath, JSON.stringify(body, null, 2), "utf8")
-    return NextResponse.json({ success: true })
-  } catch {
-    return NextResponse.json({ error: "Failed to save" }, { status: 500 })
+    const body = await req.json();
+    fs.writeFileSync(filePath, JSON.stringify(body, null, 2), "utf8");
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error("Save error:", err);
+    return NextResponse.json({ error: "Failed to save" }, { status: 500 });
   }
 }
