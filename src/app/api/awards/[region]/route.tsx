@@ -7,9 +7,9 @@ const AWARDS_API_TOKEN = process.env.AWARDS_API_TOKEN;
 
 export async function GET(
   req: Request,
-  context: { params: { region: string } }
+  context: { params: Promise<{ region: string }> }
 ) {
-  const { region } = context.params;
+  const { region } = await context.params; // await here
   const filePath = path.join(awardsDir, `${region}.json`);
 
   try {
@@ -23,14 +23,14 @@ export async function GET(
 
 export async function PUT(
   req: Request,
-  context: { params: { region: string } }
+  context: { params: Promise<{ region: string }> }
 ) {
   const authHeader = req.headers.get("authorization");
   if (!authHeader || authHeader !== `Bearer ${AWARDS_API_TOKEN}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { region } = context.params;
+  const { region } = await context.params; // await here
   const filePath = path.join(awardsDir, `${region}.json`);
 
   try {
