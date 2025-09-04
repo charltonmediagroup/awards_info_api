@@ -16,7 +16,7 @@ export default function LoginPage() {
       username,
       password,
     });
-    if (result?.ok) router.push("/awards/default"); // redirect after login
+    if (result?.ok) router.push("/awards"); // redirect after login
     else alert("Invalid credentials");
   };
 

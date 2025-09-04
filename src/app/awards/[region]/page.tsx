@@ -3,13 +3,23 @@ import path from "path"
 import AwardsEditor from "@/components/AwardsEditor"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
+import Link from "next/link"
 
 const awardsDir = path.join(process.cwd(), "src/data/awards")
 
 export default async function AwardsPage({ params }: { params: { region: string } }) {
     // Check login
     const session = await getServerSession(authOptions)
-    if (!session) return <p>Please log in to edit awards.</p>
+    if (!session) return <div>
+        <p>Please log in to edit awards.</p>
+        <Link
+            href="/login"
+            className="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700"
+        >
+            Login
+        </Link>
+    </div>
+
 
     const { region } = params
 
