@@ -25,8 +25,8 @@ const AwardsEditor = ({ initialData, region }: { initialData: AwardsJson; region
     const [awards, setAwards] = useState<Award[]>(initialData.awards || [])
     const [synonyms, setSynonyms] = useState<Record<string, string[]>>({})
 
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState<string | null>(null)
+    const [_loading, setLoading] = useState(true)
+    const [_error, setError] = useState<string | null>(null)
 
     const [editingIndustry, setEditingIndustry] = useState<string | null>(null)
     const [editingRecognition, setEditingRecognition] = useState<string | null>(null)
@@ -120,13 +120,6 @@ const AwardsEditor = ({ initialData, region }: { initialData: AwardsJson; region
             })
         )
         setConfirmDelete(null)
-    }
-
-    const handleAddSynonym = (industry: string, keyword: string) => {
-        setSynonyms(prev => ({
-            ...prev,
-            [industry]: [...(prev[industry] || []), keyword],
-        }))
     }
 
     useEffect(() => {

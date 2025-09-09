@@ -8,12 +8,13 @@ export async function GET(
 ) {
   try {
     const { region } = params
+    console.log("GET /api/awards:", region)
 
     const client = await clientPromise
     const db = client.db("awardsDB")
 
     const regionData = await db.collection("awards").findOne(
-      { region: new RegExp(`^${region}$`, "i") }, // case-insensitive
+      { region: new RegExp(`^${region}$`, "i") }, // case-insensitive match
       { projection: { _id: 0 } }
     )
 
@@ -28,7 +29,6 @@ export async function GET(
   }
 }
 
-// ✅ UPDATE region data
 // ✅ UPDATE or CREATE region data
 export async function PUT(
   req: Request,
@@ -36,8 +36,9 @@ export async function PUT(
 ) {
   try {
     const { region } = params
-    const body = await req.json()
+    console.log("PUT /api/awards:", region)
 
+    const body = await req.json()
     const { awards, industries, recognitions, synonyms } = body
 
     const client = await clientPromise
@@ -55,7 +56,7 @@ export async function PUT(
           updatedAt: new Date(),
         },
       },
-      { upsert: true, returnDocument: "after", projection: { _id: 0 } } // 👈 upsert enabled
+      { upsert: true, returnDocument: "after", projection: { _id: 0 } }
     )
 
     return NextResponse.json({ success: true, data: updated.value?.data })
@@ -65,7 +66,6 @@ export async function PUT(
   }
 }
 
-
 // ✅ DELETE region
 export async function DELETE(
   req: Request,
@@ -73,12 +73,13 @@ export async function DELETE(
 ) {
   try {
     const { region } = params
+    console.log("DELETE /api/awards:", region)
 
     const client = await clientPromise
     const db = client.db("awardsDB")
 
     const deleted = await db.collection("awards").deleteOne({
-      region: new RegExp(`^${region}$`, "i"), // case-insensitive
+      region: new RegExp(`^${region}$`, "i"),
     })
 
     if (deleted.deletedCount === 0) {
