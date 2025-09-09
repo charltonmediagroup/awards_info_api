@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
+import Image from "next/image"
 
 type Award = {
     icon: string
@@ -127,12 +128,6 @@ const AwardsEditor = ({ initialData, region }: { initialData: AwardsJson; region
             [industry]: [...(prev[industry] || []), keyword],
         }))
     }
-    const handleRemoveSynonym = (industry: string, idx: number) => {
-        setSynonyms(prev => ({
-            ...prev,
-            [industry]: prev[industry].filter((_, i) => i !== idx),
-        }))
-    }
 
     useEffect(() => {
         const fetchData = async () => {
@@ -147,9 +142,14 @@ const AwardsEditor = ({ initialData, region }: { initialData: AwardsJson; region
                 setRecognitions(data.recognitions || [])
                 setAwards(data.awards || [])
                 setSynonyms(data.synonyms || {})
-            } catch (err: any) {
+            } catch (err: unknown) {
                 console.error("Fetch error:", err)
-                setError("Could not load region data")
+
+                let message = "Could not load region data"
+                if (err instanceof Error) {
+                    message = err.message
+                }
+                setError(message)
             } finally {
                 setLoading(false)
             }
@@ -404,10 +404,12 @@ const AwardsEditor = ({ initialData, region }: { initialData: AwardsJson; region
                                         {/* Preview */}
                                         {award.icon && (
                                             award.icon.startsWith("http") ? (
-                                                <img
+                                                <Image
                                                     src={award.icon}
                                                     alt="icon"
-                                                    className="w-15 h-15 object-contain rounded"
+                                                    width={60}
+                                                    height={60}
+                                                    className="object-contain rounded"
                                                 />
                                             ) : (
                                                 <span className="text-xl">{award.icon}</span>
