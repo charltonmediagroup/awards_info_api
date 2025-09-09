@@ -12,8 +12,14 @@ export async function GET() {
       success: true,
       collections: collections.map(c => c.name),
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("MongoDB connection error:", err);
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+
+    let message = "Unknown error";
+    if (err instanceof Error) {
+      message = err.message;
+    }
+
+    return NextResponse.json({ success: false, error: message }, { status: 500 });
   }
 }
