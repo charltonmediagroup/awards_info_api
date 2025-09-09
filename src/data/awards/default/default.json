@@ -1,0 +1,485 @@
+{
+  "awards": [
+    {
+      "name": "ABF Corporate & Investment Banking Awards",
+      "description": "The ABF Corporate & Investment Banking Awards honours outstanding performance, innovation and excellence in the corporate and investment banking industry in Asia.",
+      "icon": "🏦",
+      "url": "https://asianbankingandfinance.net/event/abf-corporate-and-investment-banking-awards",
+      "industries": {
+        "Banking": 100,
+        "Financial Services": 80
+      },
+      "recognitions": {
+        "Banking": 100,
+        "Financial Technology": 75
+      }
+    },
+    {
+      "name": "ABF Fintech Awards",
+      "description": "Asian Banking & Finance FinTech Awards honours excellence in the evolving landscape of financial technology in the Asia Pacific.",
+      "icon": "💳",
+      "url": "https://asianbankingandfinance.net/event/abf-fintech-awards",
+      "industries": {
+        "Financial Technology": 100,
+        "Technology": 59,
+        "Blockchain": 90,
+        "Banking": 80,
+        "Financial Services": 70
+      },
+      "recognitions": {
+        "Financial Technology": 100,
+        "Technology": 50,
+        "Banking": 80
+      }
+    },
+    {
+      "name": "ABF Retail Banking Awards",
+      "description": "Asian Banking & Finance Retail Banking Awards celebrates excellence and innovation in Asia's retail banking sector.",
+      "icon": "🏧",
+      "url": "https://asianbankingandfinance.net/event/abf-retail-banking-awards",
+      "industries": {
+        "Banking": 90,
+        "Financial Services": 90,
+        "Retail": 100
+      },
+      "recognitions": {
+        "Banking": 100
+      }
+    },
+    {
+      "name": "ABF Wholesale Banking Awards",
+      "description": "Asian Banking & Finance Wholesale Banking Awards recognises outstanding players in Asia Pacific's wholesale banking industry.",
+      "icon": "🏛️",
+      "url": "https://asianbankingandfinance.net/event/abf-wholesale-banking-awards",
+      "industries": {
+        "Banking": 90,
+        "Financial Services": 90
+      },
+      "recognitions": {
+        "Banking": 100
+      }
+    },
+    {
+      "name": "Asia-Pacific Broadcasting+ Awards",
+      "description": "Asia-Pacific Broadcasting+ Awards recognises innovation and excellence in broadcasting projects advancing digitalisation and engineering.",
+      "icon": "📺",
+      "url": "https://asianbusinessreview.com/event/asia-pacific-broadcasting-awards",
+      "industries": {
+        "Broadcast and Multimedia": 100,
+        "Digital": 80,
+        "Information Technology": 30
+      },
+      "recognitions": {
+        "Broadcast and Media": 100
+      }
+    },
+    {
+      "name": "Asian Experience Awards",
+      "description": "Asian Experience Awards recognises ingenious initiatives delivering meaningful brand experiences to stakeholders.",
+      "icon": "✨",
+      "url": "https://asianbusinessreview.com/event/asian-experience-awards",
+      "industries": {
+        "Marketing": 90,
+        "Hospitality & Leisure": 80,
+        "Digital": 80,
+        "Retail": 70
+      },
+      "recognitions": {
+        "Brand Experience": 100
+      }
+    },
+    {
+      "name": "Asian Oil and Gas Awards",
+      "description": "Asian Oil and Gas Awards recognises outstanding players in Asia's oil and gas industry.",
+      "icon": "🛢️",
+      "url": "https://asian-power.com/event/asian-oil-gas-awards",
+      "industries": {
+        "Oil and Gas": 100,
+        "Power & Energy": 80
+      },
+      "recognitions": {
+        "Oil and Gas": 100,
+        "Power & Energy": 90
+      }
+    },
+    {
+      "name": "Asian Power Awards",
+      "description": "Asian Power Awards recognises innovative and groundbreaking initiatives in the Asia Pacific power sector.",
+      "icon": "⚡",
+      "url": "https://asian-power.com/event/asian-power-awards",
+      "industries": {
+        "Power & Energy": 100,
+        "Utilities & Facilities": 90,
+        "Sustainability": 80
+      },
+      "recognitions": {
+        "Power & Energy": 100,
+        "Sustainability": 90
+      }
+    },
+    {
+      "name": "Asian Telecom Awards",
+      "description": "Asian Telecom Awards recognises exceptional accomplishments in Asia's telecom industry.",
+      "icon": "📡",
+      "url": "https://asiantelecom.com/event/asian-telecom-awards",
+      "industries": {
+        "Telecommunications": 100,
+        "Information Technology": 40
+      },
+      "recognitions": {
+        "Telecommunications": 100
+      }
+    },
+    {
+      "name": "Asian Water Awards",
+      "description": "Asian Water Awards celebrates excellence and innovation in the water sector across Asia.",
+      "icon": "💧",
+      "url": "https://asian-power.com/event/asian-water-awards",
+      "industries": {
+        "Water": 100,
+        "Utilities & Facilities": 90,
+        "Sustainability": 80
+      },
+      "recognitions": {
+        "Water": 100,
+        "Sustainability": 90
+      }
+    },
+    {
+      "name": "ESGBusiness Awards",
+      "description": "ESGBusiness Awards celebrates companies leading the way in building a sustainable future.",
+      "icon": "🌱",
+      "url": "https://esgbusiness.com/event/esg-business-awards",
+      "industries": {
+        "Sustainability": 100,
+        "Manufacturing": 80,
+        "Power & Energy": 75,
+        "Real Estate": 50,
+        "Water": 70,
+        "Retail": 60
+      },
+      "recognitions": {
+        "Sustainability": 100
+      }
+    },
+    {
+      "name": "FMCG Asia Awards",
+      "description": "FMCG Asia Awards celebrates excellence and innovation in Asia's fast-moving consumer goods sector.",
+      "icon": "🛒",
+      "url": "https://fmcg.asia/event/fmcg-asia-awards",
+      "industries": {
+        "Fast-Moving Consumer Goods (FMCG)": 100,
+        "Retail": 90,
+        "Manufacturing": 80,
+        "Marketing": 70
+      },
+      "recognitions": {
+        "Fast-Moving Consumer Goods (FMCG)": 100,
+        "Retail": 90,
+        "Brand Experience": 80
+      }
+    },
+    {
+      "name": "GovMedia Conference & Awards",
+      "description": "GovMedia Conference & Awards recognises innovation and excellence in government communications and public sector initiatives.",
+      "icon": "🏛️",
+      "url": "https://govmedia.com/event/govmedia-conference-awards",
+      "industries": {
+        "Government Organizations": 100,
+        "Healthcare": 60
+      },
+      "recognitions": {
+        "Government Organizations": 100,
+        "Leadership": 80
+      }
+    },
+    {
+      "name": "Healthcare Asia Medtech Awards",
+      "description": "Healthcare Asia Medtech Awards recognises resilience and innovation in Asia's medical technology sector.",
+      "icon": "🧬",
+      "url": "https://healthcareasiamagazine.com/event/healthcare-asia-medtech-awards",
+      "industries": {
+        "Medical Technology": 100,
+        "Healthcare": 90
+      },
+      "recognitions": {
+        "Medical Technology": 100
+      }
+    },
+    {
+      "name": "Healthcare Asia Pharma Awards",
+      "description": "Healthcare Asia Pharma Awards honours those redefining pharmaceutical excellence in Asia.",
+      "icon": "💊",
+      "url": "https://www.healthcareasia.org/awards/pharma",
+      "industries": {
+        "Pharmaceutical": 100,
+        "Healthcare": 90,
+        "Medical Technology": 80
+      },
+      "recognitions": {
+        "Pharmaceutical": 100,
+        "Medical Technology": 80
+      }
+    },
+    {
+      "name": "Insurance Asia Awards",
+      "description": "Insurance Asia Awards recognises excellence and innovation in the Asia Pacific insurance industry.",
+      "icon": "🛡️",
+      "url": "https://www.insuranceasiaawards.com",
+      "industries": {
+        "Insurance": 100,
+        "Financial Services": 80
+      },
+      "recognitions": {
+        "Insurance": 100
+      }
+    },
+    {
+      "name": "Manufacturing Asia Awards",
+      "description": "Manufacturing Asia Awards celebrates innovation and excellence in Asia's industrial and manufacturing landscape.",
+      "icon": "🏭",
+      "url": "https://www.manufacturingasiaawards.com",
+      "industries": {
+        "Manufacturing": 100,
+        "Engineering": 90,
+        "Packaging": 70,
+        "Marine & Maritime": 30
+      },
+      "recognitions": {
+        "Manufacturing": 100,
+        "Sustainability": 70
+      }
+    },
+    {
+      "name": "QSR Media Asia Conference and Awards",
+      "description": "QSR Media Asia Conference & Awards recognises achievements of top brands, operators, and individuals in Asia's quick-service restaurant industry.",
+      "icon": "🍔",
+      "url": "https://www.qsrmedia.asia/awards",
+      "industries": {
+        "Quick Service Restaurant": 100,
+        "Food and Beverage": 90,
+        "Casual Dining": 90
+      },
+      "recognitions": {
+        "Quick Service Restaurant": 100,
+        "Brand Experience": 80
+      }
+    },
+    {
+      "name": "Real Estate Asia Awards",
+      "description": "Real Estate Asia Awards spotlights exceptional achievements in Asia's dynamic real estate industry.",
+      "icon": "🏢",
+      "url": "https://www.realestateasiaawards.com",
+      "industries": {
+        "Real Estate": 100,
+        "Architecture": 95,
+        "Construction": 95,
+        "Interior Design": 90
+      },
+      "recognitions": {
+        "Real Estate": 100
+      }
+    },
+    {
+      "name": "Real Estate Asia Built Environment Awards",
+      "description": "Real Estate Asia Built Environment Awards celebrates achievements in construction, architecture, and interior design across Asia.",
+      "icon": "🏗️",
+      "url": "https://www.realestateasiaawards.com/built-environment",
+      "industries": {
+        "Architecture": 90,
+        "Construction": 90,
+        "Design": 90,
+        "Real Estate": 100,
+        "Interior Design": 95
+      },
+      "recognitions": {
+        "Real Estate": 100,
+        "Architecture": 100,
+        "Construction": 100,
+        "Design": 90,
+        "Sustainability": 30
+      }
+    },
+    {
+      "name": "Retail Asia Awards",
+      "description": "Retail Asia Awards recognises outstanding achievements and innovations in Asia-Pacific's retail industry.",
+      "icon": "🛍️",
+      "url": "https://www.retailasiaawards.com",
+      "industries": {
+        "Retail": 100,
+        "Fast-Moving Consumer Goods (FMCG)": 80,
+        "Digital": 70,
+        "Marketing": 75
+      },
+      "recognitions": {
+        "Retail": 100,
+        "Brand Experience": 90
+      }
+    },
+    {
+      "name": "SBR International Business Awards",
+      "description": "Singapore Business Review International Business Awards celebrates the outstanding achievements of foreign companies in Singapore.",
+      "icon": "🌏",
+      "url": "https://www.singaporebusinessreview.com/awards/international-business",
+      "industries": {
+        "International Business": 100,
+        "Manufacturing": 70,
+        "Financial Services": 75,
+        "Logistics & Supply Chain": 50
+      },
+      "recognitions": {
+        "International Business": 100,
+        "Leadership": 80
+      }
+    },
+    {
+      "name": "SBR Management Excellence Awards",
+      "description": "Singapore Business Review Management Excellence Awards recognises exceptional business leaders, teams, and initiatives that drive growth and workforce impact in Singapore.",
+      "icon": "👑",
+      "url": "https://www.singaporebusinessreview.com/awards/management-excellence",
+      "industries": {
+        "Leadership": 100,
+        "Business Services": 80,
+        "Government Organizations": 70
+      },
+      "recognitions": {
+        "Leadership": 100
+      }
+    },
+    {
+      "name": "SBR National Business Awards",
+      "description": "Singapore Business Review National Business Awards celebrates the remarkable achievements of homegrown companies in Singapore.",
+      "icon": "🏆",
+      "url": "https://www.singaporebusinessreview.com/awards/national-business",
+      "industries": {
+        "Local Business": 100,
+        "Retail": 80,
+        "Manufacturing": 70,
+        "Healthcare": 65
+      },
+      "recognitions": {
+        "Local Business": 100,
+        "Leadership": 80
+      }
+    },
+    {
+      "name": "SBR Technology Excellence Awards",
+      "description": "Singapore Business Review Technology Excellence Awards recognises exceptional companies in Singapore leading the digital disruption and technological revolution in their industries.",
+      "icon": "🚀",
+      "url": "https://www.singaporebusinessreview.com/awards/technology-excellence",
+      "industries": {
+        "Technology": 100,
+        "Information Technology": 100,
+        "Cybersecurity": 85,
+        "Financial Technology": 64,
+        "Digital": 84,
+        "Blockchain": 85
+      },
+      "recognitions": {
+        "Technology": 100,
+        "Financial Technology": 60
+      }
+    },
+    {
+      "name": "TDM Travel Trade Excellence Awards – Asia",
+      "description": "TDM Travel Excellence Awards - Asia recognises outstanding achievements within the travel industry across Asia Pacific.",
+      "icon": "✈️",
+      "url": "https://www.tdmtradeawards.com/asia",
+      "industries": {
+        "Travel": 100,
+        "Hospitality & Leisure": 95,
+        "Tourism": 90,
+        "Transportation": 80,
+        "Marine & Maritime": 30
+      },
+      "recognitions": {
+        "Travel": 100,
+        "Hospitality & Leisure": 95
+      }
+    }
+  ],
+  "industries": [
+    "Agriculture",
+    "AI",
+    "Architecture",
+    "Banking",
+    "Blockchain",
+    "Broadcast and Multimedia",
+    "Business Services",
+    "Casual Dining",
+    "Construction",
+    "Cybersecurity",
+    "Design",
+    "Digital",
+    "Education",
+    "Engineering",
+    "Entertainment",
+    "Export",
+    "Fast-Moving Consumer Goods (FMCG)",
+    "Financial Services",
+    "Financial Technology",
+    "Food and Beverage",
+    "Government Organizations",
+    "Health & Wellness",
+    "Healthcare",
+    "Hospitality & Leisure",
+    "Human Resources",
+    "Information Technology",
+    "Insurance",
+    "Interior Design",
+    "Leadership",
+    "Logistics & Supply Chain",
+    "Manufacturing",
+    "Marine & Maritime",
+    "Marketing",
+    "Medical Technology",
+    "Non-Profit Organizations",
+    "Oil and Gas",
+    "Packaging",
+    "Pharmaceutical",
+    "Power & Energy",
+    "Products",
+    "Quick Service Restaurant",
+    "Real Estate",
+    "Retail",
+    "Sustainability",
+    "Technology",
+    "Telecommunications",
+    "Tourism",
+    "Transportation",
+    "Travel",
+    "Utilities & Facilities",
+    "Waste Management",
+    "Water"
+  ],
+  "recognitions": [
+    "Banking",
+    "Financial Technology",
+    "Broadcast and Media",
+    "Brand Experience",
+    "Oil and Gas",
+    "Power & Energy",
+    "Telecommunications",
+    "Water",
+    "Sustainability",
+    "Fast-Moving Consumer Goods (FMCG)",
+    "Government Organizations",
+    "Medical Technology",
+    "Pharmaceutical",
+    "Insurance",
+    "Manufacturing",
+    "Quick Service Restaurant",
+    "Real Estate",
+    "Architecture",
+    "Construction",
+    "Design",
+    "Retail",
+    "International Business",
+    "Leadership",
+    "Local Business",
+    "Technology",
+    "Travel",
+    "Hospitality & Leisure",
+    "Other"
+  ]
+}
