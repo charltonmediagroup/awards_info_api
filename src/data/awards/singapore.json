@@ -7,7 +7,8 @@
       "url": "https://asianbankingandfinance.net/event/abf-corporate-and-investment-banking-awards",
       "industries": {
         "Banking": 100,
-        "Financial Services": 80
+        "Financial Services": 80,
+        "Financial Technology": 23
       },
       "recognitions": {
         "Banking": 100,
@@ -43,7 +44,8 @@
         "Retail": 100
       },
       "recognitions": {
-        "Banking": 100
+        "Banking": 86,
+        "Retail": 100
       }
     },
     {

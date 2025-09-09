@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 
 type Award = {
     icon: string
@@ -15,12 +15,17 @@ type AwardsJson = {
     awards: Award[]
     industries: string[]
     recognitions: string[]
+    synonyms: Record<string, string[]>
 }
 
 const AwardsEditor = ({ initialData, region }: { initialData: AwardsJson; region: string }) => {
     const [industries, setIndustries] = useState<string[]>(initialData.industries || [])
     const [recognitions, setRecognitions] = useState<string[]>(initialData.recognitions || [])
     const [awards, setAwards] = useState<Award[]>(initialData.awards || [])
+    const [synonyms, setSynonyms] = useState<Record<string, string[]>>({})
+
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
 
     const [editingIndustry, setEditingIndustry] = useState<string | null>(null)
     const [editingRecognition, setEditingRecognition] = useState<string | null>(null)
@@ -116,6 +121,43 @@ const AwardsEditor = ({ initialData, region }: { initialData: AwardsJson; region
         setConfirmDelete(null)
     }
 
+    const handleAddSynonym = (industry: string, keyword: string) => {
+        setSynonyms(prev => ({
+            ...prev,
+            [industry]: [...(prev[industry] || []), keyword],
+        }))
+    }
+    const handleRemoveSynonym = (industry: string, idx: number) => {
+        setSynonyms(prev => ({
+            ...prev,
+            [industry]: prev[industry].filter((_, i) => i !== idx),
+        }))
+    }
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setLoading(true)
+                const res = await fetch(`/api/awards/${region}`)
+                if (!res.ok) throw new Error("Failed to fetch region data")
+
+                const data = await res.json()
+
+                setIndustries(data.industries || [])
+                setRecognitions(data.recognitions || [])
+                setAwards(data.awards || [])
+                setSynonyms(data.synonyms || {})
+            } catch (err: any) {
+                console.error("Fetch error:", err)
+                setError("Could not load region data")
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchData()
+    }, [region])
+
     const handleSave = async () => {
         try {
             const res = await fetch(`/api/awards/${region}`, {
@@ -124,8 +166,14 @@ const AwardsEditor = ({ initialData, region }: { initialData: AwardsJson; region
                     "Content-Type": "application/json",
                     "Authorization": `Bearer cmg_token`
                 },
-                body: JSON.stringify({ awards, industries, recognitions }),
+                body: JSON.stringify({
+                    awards,
+                    industries,
+                    recognitions,
+                    synonyms
+                }),
             })
+            console.log("PUT URL:", `/api/awards/${region}`)
 
             if (!res.ok) throw new Error("Failed to save")
             alert("Saved ✅")
@@ -136,7 +184,7 @@ const AwardsEditor = ({ initialData, region }: { initialData: AwardsJson; region
     }
 
     return (
-        <div className="p-6 space-y-6">
+        <div className="p-6 space-y-6 mx-[10%]">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-3xl font-bold">Awards JSON Editor 🏆 ({region})</h1>
                 <button
@@ -147,9 +195,9 @@ const AwardsEditor = ({ initialData, region }: { initialData: AwardsJson; region
                 </button>
             </div>
 
-            <div className="grid grid-cols-5 gap-6 h-[calc(100vh-100px)]">
+            <div className="grid grid-cols-3 gap-6 h-[calc(100vh-100px)]">
                 {/* Industries */}
-                <div className="col-span-1 p-4 border border-slate-700 rounded-lg shadow bg-slate-800 overflow-y-auto">
+                <div className="col-span-1 p-4 border border-slate-700 rounded-lg shadow bg-slate-800 overflow-y-auto scrollbar-dark">
                     <h2 className="text-xl font-semibold mb-3">Industries</h2>
                     {industries.map(ind => (
                         <div key={ind} className="flex items-center gap-2 mb-2">
@@ -178,9 +226,145 @@ const AwardsEditor = ({ initialData, region }: { initialData: AwardsJson; region
                     <button onClick={addIndustry} className="px-3 py-1 bg-blue-500 text-white rounded">+ Add Industry</button>
                 </div>
 
-                {/* Awards */}
-                <div className="col-span-3 overflow-y-auto bg-slate-700 rounded-md p-4">
-                    <div className="grid grid-cols-2 gap-4">
+                {/* Recognitions */}
+                <div className="col-span-1 p-4 border border-slate-700 rounded-lg shadow bg-slate-800 overflow-y-auto scrollbar-dark">
+                    <h2 className="text-xl font-semibold mb-3">Recognitions</h2>
+                    {recognitions.map(rec => (
+                        <div key={rec} className="flex items-center gap-2 mb-2">
+                            {editingRecognition === rec ? (
+                                <>
+                                    <input type="text" value={tempValue} onChange={e => setTempValue(e.target.value)} className="border rounded px-2 py-1 flex-1" />
+                                    <button onClick={() => saveRecognition(rec, tempValue)} className="px-2 py-1 bg-green-500 text-white rounded">✔</button>
+                                    <button onClick={() => setEditingRecognition(null)} className="px-2 py-1 bg-gray-500 text-white rounded">✕</button>
+                                </>
+                            ) : (
+                                <>
+                                    <span className="flex-1">{rec}</span>
+                                    <button onClick={() => { setEditingRecognition(rec); setTempValue(rec) }} className="px-2 py-1 bg-yellow-400 text-white rounded">Edit</button>
+                                    {confirmDelete?.type === "recognition" && confirmDelete.key === rec ? (
+                                        <>
+                                            <button onClick={() => deleteRecognition(rec)} className="px-2 py-1 bg-red-500 text-white rounded">Confirm?</button>
+                                            <button onClick={() => setConfirmDelete(null)} className="px-2 py-1 bg-gray-500 text-white rounded">Cancel</button>
+                                        </>
+                                    ) : (
+                                        <button onClick={() => setConfirmDelete({ type: "recognition", key: rec })} className="px-2 py-1 bg-red-400 text-white rounded">✕</button>
+                                    )}
+                                </>
+                            )}
+                        </div>
+                    ))}
+                    <button onClick={addRecognition} className="px-3 py-1 bg-blue-500 text-white rounded">+ Add Recognition</button>
+                </div>
+                {/* ---------- SYNONYMS SECTION ---------- */}
+                <div className="col-span-1 p-4 border border-slate-700 rounded-lg shadow bg-slate-800 overflow-y-auto scrollbar-dark">
+                    <h2 className="text-xl font-semibold mb-4">Synonyms</h2>
+
+                    {Object.entries(synonyms).map(([keyword, words]) => (
+                        <div key={keyword} className="my-10">
+                            <div className="flex items-center justify-between mb-2">
+                                <h3 className="font-medium">{keyword}</h3>
+                                <button
+                                    onClick={() =>
+                                        setSynonyms(prev => {
+                                            const updated = { ...prev }
+                                            delete updated[keyword] // ✅ remove entire keyword
+                                            return updated
+                                        })
+                                    }
+                                    className="text-red-400 text-xs hover:text-red-700"
+                                >
+                                    Delete Keyword ✕
+                                </button>
+                            </div>
+
+                            {/* Synonym pills */}
+                            <div className="flex flex-wrap gap-2">
+                                {words.length > 0 ? (
+                                    words.map((w, i) => (
+                                        <div
+                                            key={i}
+                                            className="flex items-center gap-1 px-2 py-1 bg-slate-700 rounded-full text-sm"
+                                        >
+                                            <input
+                                                type="text"
+                                                value={w}
+                                                onChange={(e) => {
+                                                    const newValue = e.target.value
+                                                    setSynonyms(prev => {
+                                                        const updated = { ...prev }
+                                                        updated[keyword][i] = newValue
+                                                        return updated
+                                                    })
+                                                }}
+                                                className="bg-transparent outline-none w-auto"
+                                            />
+                                            <button
+                                                onClick={() =>
+                                                    setSynonyms(prev => ({
+                                                        ...prev,
+                                                        [keyword]: prev[keyword].filter((_, idx) => idx !== i),
+                                                    }))
+                                                }
+                                                className="text-red-500 hover:text-red-700"
+                                            >
+                                                ✕
+                                            </button>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="text-sm text-gray-400">No synonyms yet</p>
+                                )}
+                            </div>
+
+                            {/* Add synonym input */}
+                            <button
+                                onClick={() =>
+                                    setSynonyms(prev => ({
+                                        ...prev,
+                                        [keyword]: [...(prev[keyword] || []), ""],
+                                    }))
+                                }
+                                className="mt-2 text-sm px-2 py-1 bg-blue-500 text-white rounded"
+                            >
+                                + Add Synonym
+                            </button>
+                        </div>
+                    ))}
+
+                    {/* Add new keyword */}
+                    <div className="mt-6">
+                        <select
+                            className="px-2 py-1 border bg-slate-700 rounded text-sm"
+                            value="" // always reset after change
+                            onChange={(e) => {
+                                const selected = e.target.value
+                                if (selected) {
+                                    setSynonyms(prev => ({
+                                        ...prev,
+                                        [selected]: [], // new keyword with empty synonyms
+                                    }))
+                                }
+                            }}
+                        >
+                            <option value="">+ Add Keyword</option>
+                            {recognitions
+                                .filter(r => !(r in synonyms)) // only recognitions not already used
+                                .map(r => (
+                                    <option key={r} value={r}>
+                                        {r}
+                                    </option>
+                                ))}
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+
+            {/* Awards */}
+            <div className="my-[50px] grid h-[calc(100vh-100px)]">
+                <div className="overflow-y-auto bg-slate-700 rounded-md p-4 scrollbar-dark">
+                    <h2 className="text-xl font-semibold mb-3">Awards</h2>
+                    <div className="grid grid-cols-3 gap-4">
                         {awards.map((award, index) => {
                             const activeIndustries = Object.entries(award.industries).filter(([_, v]) => v > 0)
                             const availableIndustries = industries.filter(ind => !(ind in award.industries))
@@ -202,8 +386,33 @@ const AwardsEditor = ({ initialData, region }: { initialData: AwardsJson; region
                                     </div>
                                     <textarea rows={3} value={award.description} onChange={e => setAwards(prev => prev.map((a, i) => i === index ? { ...a, description: e.target.value } : a))} className="border rounded px-2 py-1 mt-2 w-full" />
                                     <div className="flex items-center gap-2 mt-2">
-                                        <span className="w-16">Image</span>
-                                        <input type="text" value={award.icon} onChange={e => setAwards(prev => prev.map((a, i) => i === index ? { ...a, icon: e.target.value } : a))} className="border rounded px-2 py-1 flex-1" placeholder="e.g. ✨" />
+                                        <span className="w-16 text-sm">Image/icon</span>
+                                        <input
+                                            type="text"
+                                            value={award.icon}
+                                            onChange={e =>
+                                                setAwards(prev =>
+                                                    prev.map((a, i) =>
+                                                        i === index ? { ...a, icon: e.target.value } : a
+                                                    )
+                                                )
+                                            }
+                                            className="border rounded px-2 py-1 flex-1"
+                                            placeholder="e.g. ✨ or https://example.com/icon.png"
+                                        />
+
+                                        {/* Preview */}
+                                        {award.icon && (
+                                            award.icon.startsWith("http") ? (
+                                                <img
+                                                    src={award.icon}
+                                                    alt="icon"
+                                                    className="w-15 h-15 object-contain rounded"
+                                                />
+                                            ) : (
+                                                <span className="text-xl">{award.icon}</span>
+                                            )
+                                        )}
                                     </div>
 
                                     <div className="flex items-center gap-2 mt-2">
@@ -293,42 +502,12 @@ const AwardsEditor = ({ initialData, region }: { initialData: AwardsJson; region
                     </div>
                     <button onClick={addAward} className="mt-4 px-4 py-2 bg-green-600 text-white rounded">+ Add Award</button>
                 </div>
-
-                {/* Recognitions */}
-                <div className="col-span-1 p-4 border border-slate-700 rounded-lg shadow bg-slate-800 overflow-y-auto">
-                    <h2 className="text-xl font-semibold mb-3">Recognitions</h2>
-                    {recognitions.map(rec => (
-                        <div key={rec} className="flex items-center gap-2 mb-2">
-                            {editingRecognition === rec ? (
-                                <>
-                                    <input type="text" value={tempValue} onChange={e => setTempValue(e.target.value)} className="border rounded px-2 py-1 flex-1" />
-                                    <button onClick={() => saveRecognition(rec, tempValue)} className="px-2 py-1 bg-green-500 text-white rounded">✔</button>
-                                    <button onClick={() => setEditingRecognition(null)} className="px-2 py-1 bg-gray-500 text-white rounded">✕</button>
-                                </>
-                            ) : (
-                                <>
-                                    <span className="flex-1">{rec}</span>
-                                    <button onClick={() => { setEditingRecognition(rec); setTempValue(rec) }} className="px-2 py-1 bg-yellow-400 text-white rounded">Edit</button>
-                                    {confirmDelete?.type === "recognition" && confirmDelete.key === rec ? (
-                                        <>
-                                            <button onClick={() => deleteRecognition(rec)} className="px-2 py-1 bg-red-500 text-white rounded">Confirm?</button>
-                                            <button onClick={() => setConfirmDelete(null)} className="px-2 py-1 bg-gray-500 text-white rounded">Cancel</button>
-                                        </>
-                                    ) : (
-                                        <button onClick={() => setConfirmDelete({ type: "recognition", key: rec })} className="px-2 py-1 bg-red-400 text-white rounded">✕</button>
-                                    )}
-                                </>
-                            )}
-                        </div>
-                    ))}
-                    <button onClick={addRecognition} className="px-3 py-1 bg-blue-500 text-white rounded">+ Add Recognition</button>
-                </div>
             </div>
 
             {/* JSON Output */}
             <div className="mt-6 p-4 bg-slate-800 border border-slate-700 rounded-lg">
-                <h2 className="font-semibold mb-2">Updated JSON ({region}.json):</h2>
-                <pre className="text-sm whitespace-pre-wrap">{JSON.stringify({ industries, recognitions, awards }, null, 2)}</pre>
+                <h2 className="font-semibold mb-2">Updated JSON ({region}):</h2>
+                <pre className="text-sm whitespace-pre-wrap">{JSON.stringify({ industries, recognitions, awards, synonyms }, null, 2)}</pre>
             </div>
         </div>
     )

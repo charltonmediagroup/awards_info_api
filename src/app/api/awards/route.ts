@@ -1,26 +1,68 @@
 import { NextResponse } from "next/server"
-import fs from "fs"
-import path from "path"
+import clientPromise from "@/lib/mongodb"
 
-const awardsDir = path.join(process.cwd(), "src/data/awards")
-const defaultFile = path.join(awardsDir, "default", "default.json")
+export async function GET() {
+  try {
+    const client = await clientPromise
+    const db = client.db("awardsDB")
+
+    // Only return region names
+    const regions = await db
+      .collection("awards")
+      .find({}, { projection: { region: 1, _id: 0 } })
+      .toArray()
+
+    return NextResponse.json({
+      success: true,
+      regions: regions.map(r => r.region),
+    })
+  } catch (err) {
+    console.error("Fetch regions error:", err)
+    return NextResponse.json({ error: "Failed to fetch regions" }, { status: 500 })
+  }
+}
 
 export async function POST(req: Request) {
   try {
     const { region } = await req.json()
-    if (!region) return NextResponse.json({ error: "Region required" }, { status: 400 })
+    if (!region) {
+      return NextResponse.json({ error: "Region required" }, { status: 400 })
+    }
 
-    const newFile = path.join(awardsDir, `${region}.json`)
-    if (fs.existsSync(newFile)) {
+    const client = await clientPromise
+    const db = client.db("awardsDB")
+
+    // Check if region already exists
+    const existing = await db.collection("awards").findOne({ region })
+    if (existing) {
       return NextResponse.json({ error: "Region already exists" }, { status: 400 })
     }
 
-    const defaultData = fs.readFileSync(defaultFile, "utf8")
-    fs.writeFileSync(newFile, defaultData, "utf8")
+    // Fetch default template
+    const generalInfo = await db
+      .collection("general_information")
+      .findOne({}, { projection: { default_region: 1 } })
 
-    return NextResponse.json({ success: true })
+    // Fallback if DB has no default_region
+    const defaultJson = generalInfo?.default_region || {
+      industries: [],
+      recognitions: [],
+      awards: [],
+      synonyms: {},
+    }
+
+    // Insert new region with default data
+    await db.collection("awards").insertOne({
+      region,
+      data: {
+        ...defaultJson,
+      },
+      updatedAt: new Date(),
+    })
+
+    return NextResponse.json({ success: true, region })
   } catch (err) {
-    console.error(err)
+    console.error("Create region error:", err)
     return NextResponse.json({ error: "Failed to create region" }, { status: 500 })
   }
 }
