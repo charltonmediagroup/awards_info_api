@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import clientPromise from "@/lib/mongodb"
 
+// ✅ shared type
 type ParamsPromise = { params: Promise<{ region: string }> }
 
 // ✅ GET region data
@@ -19,7 +20,7 @@ export async function GET(_req: NextRequest, { params }: ParamsPromise) {
       return NextResponse.json({ error: "Region not found" }, { status: 404 })
     }
 
-    return NextResponse.json(regionData.data)
+    return NextResponse.json(regionData.data, { status: 200 })
   } catch (err) {
     console.error("Fetch region error:", err)
     return NextResponse.json(
@@ -51,31 +52,18 @@ export async function PUT(req: NextRequest, { params }: ParamsPromise) {
           updatedAt: new Date(),
         },
       },
-      {
-        upsert: true,
-        returnDocument: "after",
-        projection: { _id: 0 },
-      }
+      { upsert: true, returnDocument: "after", projection: { _id: 0 } }
     )
 
-    // ✅ Handle null safely
-    if (!result || !result.value) {
+    if (!result?.value) {
       return NextResponse.json(
-        {
-          success: true,
-          message: `Region '${region}' created/updated successfully`,
-          data: { awards, industries, recognitions, synonyms },
-        },
-        { status: 201 } // better REST convention for creation
+        { success: true, message: `Region '${region}' created`, data: body },
+        { status: 201 }
       )
     }
 
     return NextResponse.json(
-      {
-        success: true,
-        message: `Region '${region}' updated successfully`,
-        data: result.value.data,
-      },
+      { success: true, message: `Region '${region}' updated`, data: result.value.data },
       { status: 200 }
     )
   } catch (err) {
@@ -86,6 +74,7 @@ export async function PUT(req: NextRequest, { params }: ParamsPromise) {
     )
   }
 }
+
 // ✅ DELETE region
 export async function DELETE(_req: NextRequest, { params }: ParamsPromise) {
   try {
