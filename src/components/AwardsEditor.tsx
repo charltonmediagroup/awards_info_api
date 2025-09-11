@@ -157,7 +157,7 @@ const AwardsEditor = ({ initialData, region }: { initialData: AwardsJson; region
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer cmg_token`
+                    // "Authorization": `Bearer cmg_token`
                 },
                 body: JSON.stringify({
                     awards,
