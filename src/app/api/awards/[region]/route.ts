@@ -1,15 +1,17 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import clientPromise from "@/lib/mongodb"
 
 const AWARDS_API_TOKEN = process.env.AWARDS_API_TOKEN
 
-// ✅ GET region data
-export async function GET(
-  _req: Request,
-  context: { params: Promise<{ region: string }> }
-) {
+// ✅ A safer type that covers both object & Promise cases
+type RegionParams = { params: { region: string } } | { params: Promise<{ region: string }> }
+
+// GET region data
+export async function GET(_req: NextRequest, context: RegionParams) {
+  const rawParams = "then" in context.params ? await context.params : context.params
+  const { region } = rawParams
+
   try {
-    const { region } = await context.params
     const client = await clientPromise
     const db = client.db("awardsDB")
 
@@ -29,18 +31,17 @@ export async function GET(
   }
 }
 
-// ✅ UPDATE or CREATE region data
-export async function PUT(
-  req: Request,
-  context: { params: Promise<{ region: string }> }
-) {
+// PUT region data
+export async function PUT(req: NextRequest, context: RegionParams) {
   const authHeader = req.headers.get("authorization")
   if (!authHeader || authHeader !== `Bearer ${AWARDS_API_TOKEN}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
+  const rawParams = "then" in context.params ? await context.params : context.params
+  const { region } = rawParams
+
   try {
-    const { region } = await context.params
     const body = await req.json()
     const { awards, industries, recognitions, synonyms } = body
 
