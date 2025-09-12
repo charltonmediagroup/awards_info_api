@@ -1,9 +1,8 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import clientPromise from "@/lib/mongodb"
 
 const AWARDS_API_TOKEN = process.env.AWARDS_API_TOKEN
 
-// Types for request body
 interface RegionData {
   awards?: string[]
   industries?: string[]
@@ -11,13 +10,20 @@ interface RegionData {
   synonyms?: string[]
 }
 
+// Helper to unwrap params (plain or promise)
+async function unwrapParams(
+  params: { region: string } | Promise<{ region: string }>
+): Promise<{ region: string }> {
+  return params instanceof Promise ? await params : params
+}
+
 // ✅ GET region data
 export async function GET(
-  _req: Request,
-  { params }: { params: { region: string } }
+  _req: NextRequest,
+  { params }: { params: { region: string } } | { params: Promise<{ region: string }> }
 ) {
   try {
-    const { region } = params
+    const { region } = await unwrapParams(params)
     const client = await clientPromise
     const db = client.db("awardsDB")
 
@@ -33,17 +39,14 @@ export async function GET(
     return NextResponse.json(regionData.data, { status: 200 })
   } catch (err) {
     console.error("Fetch region error:", err)
-    return NextResponse.json(
-      { error: "Failed to fetch region" },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: "Failed to fetch region" }, { status: 500 })
   }
 }
 
 // ✅ UPDATE or CREATE region data
 export async function PUT(
-  req: Request,
-  { params }: { params: { region: string } }
+  req: NextRequest,
+  { params }: { params: { region: string } } | { params: Promise<{ region: string }> }
 ) {
   const authHeader = req.headers.get("authorization")
   if (!authHeader || authHeader !== `Bearer ${AWARDS_API_TOKEN}`) {
@@ -51,7 +54,7 @@ export async function PUT(
   }
 
   try {
-    const { region } = params
+    const { region } = await unwrapParams(params)
     const body: RegionData = await req.json()
 
     const client = await clientPromise
@@ -81,9 +84,6 @@ export async function PUT(
     })
   } catch (err) {
     console.error("Update region error:", err)
-    return NextResponse.json(
-      { error: "Failed to update region" },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: "Failed to update region" }, { status: 500 })
   }
 }
