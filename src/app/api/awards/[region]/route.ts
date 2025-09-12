@@ -1,17 +1,23 @@
-import { NextRequest, NextResponse } from "next/server"
+import { NextResponse } from "next/server"
 import clientPromise from "@/lib/mongodb"
 
 const AWARDS_API_TOKEN = process.env.AWARDS_API_TOKEN
 
-// ✅ A safer type that covers both object & Promise cases
-type RegionParams = { params: { region: string } } | { params: Promise<{ region: string }> }
+// Types for request body
+interface RegionData {
+  awards?: string[]
+  industries?: string[]
+  recognitions?: string[]
+  synonyms?: string[]
+}
 
-// GET region data
-export async function GET(_req: NextRequest, context: RegionParams) {
-  const rawParams = "then" in context.params ? await context.params : context.params
-  const { region } = rawParams
-
+// ✅ GET region data
+export async function GET(
+  _req: Request,
+  { params }: { params: { region: string } }
+) {
   try {
+    const { region } = params
     const client = await clientPromise
     const db = client.db("awardsDB")
 
@@ -27,23 +33,26 @@ export async function GET(_req: NextRequest, context: RegionParams) {
     return NextResponse.json(regionData.data, { status: 200 })
   } catch (err) {
     console.error("Fetch region error:", err)
-    return NextResponse.json({ error: "Failed to fetch region" }, { status: 500 })
+    return NextResponse.json(
+      { error: "Failed to fetch region" },
+      { status: 500 }
+    )
   }
 }
 
-// PUT region data
-export async function PUT(req: NextRequest, context: RegionParams) {
+// ✅ UPDATE or CREATE region data
+export async function PUT(
+  req: Request,
+  { params }: { params: { region: string } }
+) {
   const authHeader = req.headers.get("authorization")
   if (!authHeader || authHeader !== `Bearer ${AWARDS_API_TOKEN}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  const rawParams = "then" in context.params ? await context.params : context.params
-  const { region } = rawParams
-
   try {
-    const body = await req.json()
-    const { awards, industries, recognitions, synonyms } = body
+    const { region } = params
+    const body: RegionData = await req.json()
 
     const client = await clientPromise
     const db = client.db("awardsDB")
@@ -53,10 +62,10 @@ export async function PUT(req: NextRequest, context: RegionParams) {
       {
         $set: {
           region,
-          "data.awards": awards,
-          "data.industries": industries,
-          "data.recognitions": recognitions,
-          "data.synonyms": synonyms,
+          "data.awards": body.awards ?? [],
+          "data.industries": body.industries ?? [],
+          "data.recognitions": body.recognitions ?? [],
+          "data.synonyms": body.synonyms ?? [],
           updatedAt: new Date(),
         },
       },
@@ -72,6 +81,9 @@ export async function PUT(req: NextRequest, context: RegionParams) {
     })
   } catch (err) {
     console.error("Update region error:", err)
-    return NextResponse.json({ error: "Failed to update region" }, { status: 500 })
+    return NextResponse.json(
+      { error: "Failed to update region" },
+      { status: 500 }
+    )
   }
 }
