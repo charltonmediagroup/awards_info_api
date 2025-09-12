@@ -1,13 +1,15 @@
-import { NextRequest, NextResponse } from "next/server"
+import { NextResponse } from "next/server"
 import clientPromise from "@/lib/mongodb"
 
-// Notice: params is a Promise<{ region: string }>
-type Params = { params: Promise<{ region: string }> }
+const AWARDS_API_TOKEN = process.env.AWARDS_API_TOKEN
 
 // ✅ GET region data
-export async function GET(_req: NextRequest, { params }: Params) {
+export async function GET(
+  _req: Request,
+  context: { params: Promise<{ region: string }> }
+) {
   try {
-    const { region } = await params   // <- await required now
+    const { region } = await context.params
     const client = await clientPromise
     const db = client.db("awardsDB")
 
@@ -28,9 +30,17 @@ export async function GET(_req: NextRequest, { params }: Params) {
 }
 
 // ✅ UPDATE or CREATE region data
-export async function PUT(req: NextRequest, { params }: Params) {
+export async function PUT(
+  req: Request,
+  context: { params: Promise<{ region: string }> }
+) {
+  const authHeader = req.headers.get("authorization")
+  if (!authHeader || authHeader !== `Bearer ${AWARDS_API_TOKEN}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
   try {
-    const { region } = await params   // <- await
+    const { region } = await context.params
     const body = await req.json()
     const { awards, industries, recognitions, synonyms } = body
 
@@ -62,27 +72,5 @@ export async function PUT(req: NextRequest, { params }: Params) {
   } catch (err) {
     console.error("Update region error:", err)
     return NextResponse.json({ error: "Failed to update region" }, { status: 500 })
-  }
-}
-
-// ✅ DELETE region
-export async function DELETE(_req: NextRequest, { params }: Params) {
-  try {
-    const { region } = await params   // <- await
-    const client = await clientPromise
-    const db = client.db("awardsDB")
-
-    const deleted = await db.collection("awards").deleteOne({
-      region: new RegExp(`^${region}$`, "i"),
-    })
-
-    if (!deleted.deletedCount) {
-      return NextResponse.json({ error: "Region not found" }, { status: 404 })
-    }
-
-    return NextResponse.json({ success: true, message: `Region '${region}' deleted` })
-  } catch (err) {
-    console.error("Delete region error:", err)
-    return NextResponse.json({ error: "Failed to delete region" }, { status: 500 })
   }
 }
