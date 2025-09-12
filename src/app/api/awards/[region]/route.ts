@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server"
 import clientPromise from "@/lib/mongodb"
 
-// ✅ shared type
-type ParamsPromise = { params: Promise<{ region: string }> }
+// Notice: params is a Promise<{ region: string }>
+type Params = { params: Promise<{ region: string }> }
 
 // ✅ GET region data
-export async function GET(_req: NextRequest, { params }: ParamsPromise) {
+export async function GET(_req: NextRequest, { params }: Params) {
   try {
-    const { region } = await params
+    const { region } = await params   // <- await required now
     const client = await clientPromise
     const db = client.db("awardsDB")
 
@@ -23,17 +23,14 @@ export async function GET(_req: NextRequest, { params }: ParamsPromise) {
     return NextResponse.json(regionData.data, { status: 200 })
   } catch (err) {
     console.error("Fetch region error:", err)
-    return NextResponse.json(
-      { error: "Failed to fetch region" },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: "Failed to fetch region" }, { status: 500 })
   }
 }
 
 // ✅ UPDATE or CREATE region data
-export async function PUT(req: NextRequest, { params }: ParamsPromise) {
+export async function PUT(req: NextRequest, { params }: Params) {
   try {
-    const { region } = await params
+    const { region } = await params   // <- await
     const body = await req.json()
     const { awards, industries, recognitions, synonyms } = body
 
@@ -55,30 +52,23 @@ export async function PUT(req: NextRequest, { params }: ParamsPromise) {
       { upsert: true, returnDocument: "after", projection: { _id: 0 } }
     )
 
-    if (!result?.value) {
-      return NextResponse.json(
-        { success: true, message: `Region '${region}' created`, data: body },
-        { status: 201 }
-      )
-    }
-
-    return NextResponse.json(
-      { success: true, message: `Region '${region}' updated`, data: result.value.data },
-      { status: 200 }
-    )
+    return NextResponse.json({
+      success: true,
+      message: result?.value
+        ? `Region '${region}' updated`
+        : `Region '${region}' created`,
+      data: result?.value?.data ?? body,
+    })
   } catch (err) {
     console.error("Update region error:", err)
-    return NextResponse.json(
-      { error: "Failed to update region" },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: "Failed to update region" }, { status: 500 })
   }
 }
 
 // ✅ DELETE region
-export async function DELETE(_req: NextRequest, { params }: ParamsPromise) {
+export async function DELETE(_req: NextRequest, { params }: Params) {
   try {
-    const { region } = await params
+    const { region } = await params   // <- await
     const client = await clientPromise
     const db = client.db("awardsDB")
 
@@ -86,19 +76,13 @@ export async function DELETE(_req: NextRequest, { params }: ParamsPromise) {
       region: new RegExp(`^${region}$`, "i"),
     })
 
-    if (!deleted || deleted.deletedCount === 0) {
+    if (!deleted.deletedCount) {
       return NextResponse.json({ error: "Region not found" }, { status: 404 })
     }
 
-    return NextResponse.json({
-      success: true,
-      message: `Region '${region}' deleted`,
-    })
+    return NextResponse.json({ success: true, message: `Region '${region}' deleted` })
   } catch (err) {
     console.error("Delete region error:", err)
-    return NextResponse.json(
-      { error: "Failed to delete region" },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: "Failed to delete region" }, { status: 500 })
   }
 }
