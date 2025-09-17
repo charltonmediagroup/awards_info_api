@@ -6,7 +6,7 @@ const AWARDS_API_TOKEN = process.env.AWARDS_API_TOKEN;
 export const dynamic = "force-dynamic"; // ⬅️ avoid static build issues
 
 interface RegionData {
-  awards?: string[];
+  awards?: any[]; // awards are objects, not just strings
   industries?: string[];
   recognitions?: string[];
   synonyms?: string[];
@@ -24,13 +24,14 @@ export async function GET(
 
     const regionData = await db.collection("awards").findOne(
       { region: new RegExp(`^${region}$`, "i") },
-      { projection: { _id: 0 } }
+      { projection: { _id: 0, region: 0, updatedAt: 0 } } // don’t return internal fields
     );
 
     if (!regionData) {
       return NextResponse.json({ error: "Region not found" }, { status: 404 });
     }
 
+    // Return flat shape (no "data" wrapper, no region field)
     return NextResponse.json(regionData, { status: 200 });
   } catch (err) {
     console.error("Fetch region error:", err);
@@ -63,22 +64,27 @@ export async function PUT(
       {
         $set: {
           region,
-          "data.awards": body.awards ?? [],
-          "data.industries": body.industries ?? [],
-          "data.recognitions": body.recognitions ?? [],
-          "data.synonyms": body.synonyms ?? [],
+          data: {
+            awards: body.awards ?? [],
+            industries: body.industries ?? [],
+            recognitions: body.recognitions ?? [],
+            synonyms: body.synonyms ?? [],
+          },
           updatedAt: new Date(),
         },
       },
-      { upsert: true, returnDocument: "after", projection: { _id: 0 } }
+      {
+        upsert: true,
+        returnDocument: "after",
+        projection: { _id: 0 }
+      }
     );
-
     return NextResponse.json({
       success: true,
       message: result?.value
         ? `Region '${region}' updated`
         : `Region '${region}' created`,
-      data: result?.value?.data ?? body,
+      data: result?.value ?? body,
     });
   } catch (err) {
     console.error("Update region error:", err);
