@@ -2,10 +2,14 @@
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 
+export const dynamic = "force-dynamic"; // prevent caching in Vercel
+
 export async function GET() {
   try {
     const client = await clientPromise;
     const db = client.db("awardsDB");
+
+    // List all collections in the DB
     const collections = await db.listCollections().toArray();
 
     return NextResponse.json({
@@ -15,11 +19,12 @@ export async function GET() {
   } catch (err: unknown) {
     console.error("MongoDB connection error:", err);
 
-    let message = "Unknown error";
-    if (err instanceof Error) {
-      message = err.message;
-    }
+    const message =
+      err instanceof Error ? err.message : "Unexpected server error";
 
-    return NextResponse.json({ success: false, error: message }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: message },
+      { status: 500 }
+    );
   }
 }
