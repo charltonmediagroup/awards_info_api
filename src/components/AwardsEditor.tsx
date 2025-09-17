@@ -129,7 +129,8 @@ const AwardsEditor = ({ initialData, region }: { initialData: AwardsJson; region
                 const res = await fetch(`/api/awards/${region}`)
                 if (!res.ok) throw new Error("Failed to fetch region data")
 
-                const data = await res.json()
+                const payload = await res.json()
+                const data = payload.data ?? payload // unwrap `data`
 
                 setIndustries(data.industries || [])
                 setRecognitions(data.recognitions || [])
@@ -157,18 +158,23 @@ const AwardsEditor = ({ initialData, region }: { initialData: AwardsJson; region
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer cmg_token`
+                    "Authorization": `Bearer ${process.env.NEXT_PUBLIC_AWARDS_TOKEN || "cmg_token"}`
                 },
                 body: JSON.stringify({
                     awards,
                     industries,
                     recognitions,
-                    synonyms
+                    synonyms,
                 }),
             })
+
             console.log("PUT URL:", `/api/awards/${region}`)
 
             if (!res.ok) throw new Error("Failed to save")
+
+            const payload = await res.json()
+            console.log("Save response:", payload)
+
             alert("Saved ✅")
         } catch (err) {
             alert("Error saving ❌")
