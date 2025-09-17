@@ -1,7 +1,9 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import clientPromise from "@/lib/mongodb"
 
-export async function POST(req: Request) {
+export const dynamic = "force-dynamic" // ⬅️ prevents static analysis at build
+
+export async function POST(req: NextRequest) {
   try {
     const { name } = await req.json()
     if (!name) {
